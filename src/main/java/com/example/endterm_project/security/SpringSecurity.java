@@ -20,30 +20,37 @@ public class SpringSecurity {
     private UserDetailsService userDetailsService;
 
     @Bean
-    public static PasswordEncoder passwordEncoder(){
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.csrf().disable()
-//                .authorizeHttpRequests((authorize) ->
-//                        authorize.requestMatchers("/register/**").permitAll()
-//                                .requestMatchers("/index").permitAll()
-//                                .requestMatchers("/users").hasRole("ADMIN")
-//                ).formLogin(
-//                        form -> form
-//                                .loginPage("/login")
-//                                .loginProcessingUrl("/login")
-//                                .defaultSuccessUrl("/users")
-//                                .permitAll()
-//                ).logout(
-//                        logout -> logout
-//                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                                .permitAll()
-//                );
-//        return http.build();
-//    }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable()) // Explicitly disable CSRF using lambda
+                .authorizeHttpRequests((authorize) ->
+                        authorize
+                                .requestMatchers("/api/auth/register").permitAll() // Allow access to register endpoint
+                                .requestMatchers("/index").permitAll() // Allow access to index
+                                .requestMatchers("/users").hasRole("ADMIN") // Restrict access to users for admins
+                                .anyRequest().authenticated() // Require authentication for all other requests
+                )
+                .formLogin(
+                        form -> form
+                                .loginPage("/login") // Custom login page
+                                .loginProcessingUrl("/login") // URL to process login
+                                .defaultSuccessUrl("/users") // Redirect on successful login
+                                .permitAll()
+                )
+                .logout(
+                        logout -> logout
+                                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                .permitAll()
+                );
+
+        return http.build();
+    }
+
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

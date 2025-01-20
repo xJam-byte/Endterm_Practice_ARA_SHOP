@@ -1,5 +1,6 @@
 package com.example.endterm_project.controller;
 
+import com.example.endterm_project.dto.LoginDto;
 import com.example.endterm_project.dto.UserDto;
 import com.example.endterm_project.entity.User;
 import com.example.endterm_project.service.UserService;
@@ -40,5 +41,25 @@ public class AuthController {
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = userService.findAllUsers();
         return ResponseEntity.ok(users);
+    }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginDto loginDto) {
+        // Find the user by email
+        User user = userService.findUserByEmail(loginDto.getEmail());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid email or password.");
+        }
+
+        // Validate the password
+        if (!user.getPassword().equals(loginDto.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid email or password.");
+        }
+
+        // Login successful
+        return ResponseEntity.ok("Login successful!");
     }
 }
