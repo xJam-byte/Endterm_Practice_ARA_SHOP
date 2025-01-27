@@ -3,10 +3,11 @@ package com.example.endterm_project.controller;
 import com.example.endterm_project.dto.LoginDto;
 import com.example.endterm_project.dto.UserDto;
 import com.example.endterm_project.entity.User;
-import com.example.endterm_project.service.UserService;
+import com.example.endterm_project.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,9 +17,12 @@ import java.util.List;
 public class AuthController {
 
     private final UserService userService;
+    private PasswordEncoder passwordEncoder;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
     // Endpoint to handle user registration
@@ -52,14 +56,11 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid email or password.");
         }
-
-        // Validate the password
-        if (!user.getPassword().equals(loginDto.getPassword())) {
+        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid email or password.");
         }
 
-        // Login successful
         return ResponseEntity.ok("Login successful!");
     }
 }

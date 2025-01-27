@@ -2,6 +2,7 @@ package com.example.endterm_project.entity;
 
 
 
+import com.example.endterm_project.dto.ItemDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,9 +31,6 @@ public class Item {
     private Double price;
 
     @Column(nullable=false)
-    private String password;
-
-    @Column(nullable=false)
     private String manufacturer;
 
     @Column(nullable=false)
@@ -41,4 +39,6 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category categoryId;
+
+
 }

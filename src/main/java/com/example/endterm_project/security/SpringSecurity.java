@@ -24,22 +24,24 @@ public class SpringSecurity {
         return new BCryptPasswordEncoder();
     }
 
+    // ыыыы я лох. -абыл
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Explicitly disable CSRF using lambda
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authorize) ->
                         authorize
-                                .requestMatchers("/api/auth/register").permitAll() // Allow access to register endpoint
-                                .requestMatchers("/index").permitAll() // Allow access to index
-                                .requestMatchers("/users").hasRole("ADMIN") // Restrict access to users for admins
-                                .anyRequest().authenticated() // Require authentication for all other requests
+                                .requestMatchers("/api/auth/login","/api/auth/register").permitAll()
+                                .requestMatchers("/index").permitAll()
+                                .requestMatchers("/users").hasRole("ADMIN")
+                                .anyRequest().authenticated()
                 )
                 .formLogin(
                         form -> form
-                                .loginPage("/login") // Custom login page
-                                .loginProcessingUrl("/login") // URL to process login
-                                .defaultSuccessUrl("/users") // Redirect on successful login
+                                .loginPage("/login")
+                                .loginProcessingUrl("/login")
+                                .defaultSuccessUrl("/users")
                                 .permitAll()
                 )
                 .logout(
