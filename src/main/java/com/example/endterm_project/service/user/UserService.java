@@ -1,4 +1,4 @@
-package com.example.endterm_project.service;
+package com.example.endterm_project.service.user;
 
 import com.example.endterm_project.dto.UserDto;
 import com.example.endterm_project.entity.User;
