@@ -25,7 +25,7 @@ public class UserService implements IUserService{
         User user = new User();
         user.setName(userDto.getFirstName() + " " + userDto.getLastName());
         user.setEmail(userDto.getEmail());
-        user.setPhone_number(userDto.getPhone_number());
+        user.setPhoneNumber(userDto.getPhone_number());
         // encrypt the password using spring security
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
@@ -50,7 +50,7 @@ public class UserService implements IUserService{
         userDto.setFirstName(str[0]);
         userDto.setLastName(str[1]);
         userDto.setEmail(user.getEmail());
-        userDto.setPhone_number(user.getPhone_number());
+        userDto.setPhone_number(user.getPhoneNumber());
         return userDto;
     }
 

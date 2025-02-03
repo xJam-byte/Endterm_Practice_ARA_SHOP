@@ -3,13 +3,16 @@ package com.example.endterm_project.controller;
 import com.example.endterm_project.dto.LoginDto;
 import com.example.endterm_project.dto.UserDto;
 import com.example.endterm_project.entity.User;
+import com.example.endterm_project.security.JwtUtils;
 import com.example.endterm_project.service.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -56,11 +59,25 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid email or password.");
         }
+
+        // Validate the password
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Invalid email or password.");
         }
 
-        return ResponseEntity.ok("Login successful!");
+        // Generate a JWT token
+        UserDetails userDetails = org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPassword())
+                .authorities(new ArrayList<>())
+                .build();
+
+        JwtUtils jwtUtils = new JwtUtils();
+        String token = jwtUtils.generateToken(userDetails);
+
+        // Return the token in the response
+        return ResponseEntity.ok().body("{\"token\":\"" + token + "\"}");
     }
+
 }
